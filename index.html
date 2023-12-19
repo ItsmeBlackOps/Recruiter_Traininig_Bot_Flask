@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Question Answering Bot</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #e9ecef;
+        color: #495057;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center horizontally */
+        justify-content: center; /* Center vertically */
+        height: 100vh;
+      }
+      h1 {
+        color: #007bff;
+      }
+      #question-form {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+      #question-input {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        margin-right: 10px;
+        width: 250px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #answer {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ask the Bot</h1>
+    <form id="question-form">
+      <input
+        type="text"
+        id="question-input"
+        placeholder="Enter your question here"
+        required
+      />
+      <button type="submit">Ask</button>
+    </form>
+    <div id="answer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+      const points = data.split(/\d+\.\s/).slice(1);
+
+      let formattedHtml = "<ol>"; // Using ordered list for numbered points
+      points.forEach((point) => {
+        // Replacing **text** with <strong>text</strong>
+        const formattedPoint = point.replace(
+          /\*\*(.*?)\*\*/g,
+          "<strong>$1</strong>"
+        );
+        console.log("Formatted Point:", formattedPoint); // Debugging: Log each formatted point
+        formattedHtml += `<li>${formattedPoint.trim()}</li>`;
+      });
+      formattedHtml += "</ol>";
+
+      console.log("Formatted HTML:", formattedHtml); // Debugging: Log final HTML
+      return formattedHtml;
+
+      document.getElementById("question-form").onsubmit = function (event) {
+        event.preventDefault();
+        var question = document.getElementById("question-input").value;
+        fetch("http://127.0.0.1:5000/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question: question }),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            console.log(formatAnswer(data));
+            // Set the response as innerHTML
+            document.getElementById("answer").innerHTML = formatAnswer(data);
+          })
+          .catch((error) => console.error("Error:", error));
+      };
+    </script>
+  </body>
+</html>
